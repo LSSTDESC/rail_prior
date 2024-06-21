@@ -1,4 +1,4 @@
-# rail-prior
+# RAIL prior
 
 [![Template](https://img.shields.io/badge/Template-LINCC%20Frameworks%20Python%20Project%20Template-brightgreen)](https://lincc-ppt.readthedocs.io/en/latest/)
 [![codecov](https://codecov.io/gh/LSSTDESC/rail-prior/branch/main/graph/badge.svg)](https://codecov.io/gh/LSSTDESC/rail-prior)
