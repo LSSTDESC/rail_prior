@@ -1,6 +1,6 @@
 import qp
 import numpy as np
-import rail_prior
+from rail.rail_prior import prior_shifts
 
 
 def make_qp_ens(file):
@@ -15,7 +15,7 @@ def make_qp_ens(file):
 def make_prior():
     file = np.load('tests/rail_prior/dummy.npz')
     ens = make_qp_ens(file)
-    return rail_prior.PriorShifts(ens)
+    return prior_shifts.PriorShifts(ens)
 
 
 def test_prior():
