@@ -1,7 +1,7 @@
 import numpy as np
-from .prior_base import PriorBase
 from numpy.linalg import eig, cholesky
 from scipy.stats import multivariate_normal as mvn
+from .prior_base import PriorBase
 
 
 class PriorMoments(PriorBase):
@@ -47,12 +47,13 @@ class PriorMoments(PriorBase):
     def _is_pos_def(self, A):
         return np.all(np.linalg.eigvals(A) > 0)
 
-    def evaluate_model(self, nz, alpha):
+    def evaluate_model(self, nz, args):
         """
-        Samples a photometric distribution 
+        Samples a photometric distribution
         from a Gaussian distribution with mean
         and covariance measured from the data.
         """
+        alpha = args
         z = nz[0]
         nz = nz[1]
         return [z, nz + self.nz_chol @ alpha]

@@ -1,6 +1,6 @@
 import qp
 import numpy as np
-import rail_prior
+import rail.rail_prior as rail_prior
 
 
 def make_qp_ens(file):

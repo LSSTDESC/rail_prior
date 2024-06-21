@@ -1,7 +1,7 @@
 import numpy as np
-from .prior_base import PriorBase
 from scipy.interpolate import interp1d
 from scipy.stats import multivariate_normal as mvn
+from .prior_base import PriorBase
 
 
 class PriorShifts(PriorBase):

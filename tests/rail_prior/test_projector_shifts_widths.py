@@ -1,7 +1,6 @@
 import qp
 import numpy as np
-import rail_prior
-
+import rail.rail_prior as rail_prior
 
 def make_qp_ens(file):
     zs = file['zs']
@@ -19,7 +18,7 @@ def make_prior():
 
 
 def test_prior():
-    prior = make_projector()
+    prior = make_prior()
     prior = prior.get_prior()
     assert prior is not None
 
@@ -34,6 +33,6 @@ def test_model():
     prior = make_prior()
     shift, width = prior.sample_prior()
     input = np.array([prior.z, prior.nz_mean])
-    output = prior.evaluate_model(input, shift, width)
+    output = prior.evaluate_model(input, [shift, width])
     assert (prior.z == output[0]).all()
     assert len(output[1]) == len(prior.nz_mean)

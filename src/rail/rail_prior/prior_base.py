@@ -1,13 +1,13 @@
 import numpy as np
 
 
-class PriorBase(object):
+class PriorBase():
     """
     Base class for priors. Projectors are used to project the measured
     photometric distributions by RAIL onto the space of a given generative
-    photometric model for inference. 
-    This class is not meant to be used directly, 
-    but to be subclassed by specific projectors. 
+    photometric model for inference.
+    This class is not meant to be used directly,
+    but to be subclassed by specific projectors.
     The subclasses should implement the following methods:
     - evaluate_model: given a set of parameters, evaluate the model
     - get_prior: return the prior distribution of the model given
@@ -30,10 +30,10 @@ class PriorBase(object):
 
     def _normalize(self, nzs):
         norms = np.sum(nzs, axis=1)
-        nzs /= norms[:, None]  
+        nzs /= norms[:, None]
         return nzs
 
-    def evaluate_model(self, *args):
+    def evaluate_model(self, nz, args):
         """
         Evaluate the model at the given parameters.
         """
@@ -41,12 +41,15 @@ class PriorBase(object):
 
     def get_prior(self):
         """
-        Returns the calibrated prior distribution for the model 
+        Returns the calibrated prior distribution for the model
         parameters given the measured photometric distributions.
         """
         if self.prior is None:
             self.prior = self._get_prior()
         return self.prior
+
+    def _get_prior(self):
+        raise NotImplementedError
 
     def sample_prior(self):
         """
@@ -63,7 +66,6 @@ class PriorBase(object):
         if mode == "dist":
             return prior
         if mode == "file":
-            prior = self.get_prior()
             np.save("prior_mean.npy", prior.mean)
             np.save("prior_cov.npy", prior.cov)
         else:
