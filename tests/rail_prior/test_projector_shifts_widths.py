@@ -18,7 +18,7 @@ def make_prior():
 
 
 def test_prior():
-    prior = make_projector()
+    prior = make_prior()
     prior = prior.get_prior()
     assert prior is not None
 

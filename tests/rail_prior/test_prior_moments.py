@@ -32,8 +32,8 @@ def test_sample_prior():
 
 def test_model():
     prior = make_prior()
-    shift = prior.sample_prior()
+    alpha = prior.sample_prior()
     input = np.array([prior.z, prior.nz_mean])
-    output = prior.evaluate_model(input, shift)
+    output = prior.evaluate_model(input, alpha)
     assert (prior.z == output[0]).all()
     assert len(output[1]) == len(prior.nz_mean)
