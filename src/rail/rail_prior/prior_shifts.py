@@ -24,14 +24,13 @@ class PriorShifts(PriorBase):
     def _find_prior(self):
         self.shift = self._find_shift()
 
-    def evaluate_model(self, nz, args):
+    def evaluate_model(self, nz, shift):
         """
         Aplies a shift to the given p(z) distribution.
         This is done by interpolating the p(z) distribution
         at the shifted z values and then evaluating it at the
         original z values.
         """
-        shift = args[0]
         z = nz[0]
         nz = nz[1]
         z_shift = z + shift
