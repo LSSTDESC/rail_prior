@@ -1,6 +1,6 @@
 import qp
 import numpy as np
-import rail_prior
+import rail.rail_prior as rail_prior
 
 
 def make_qp_ens(file):
@@ -19,8 +19,8 @@ def make_prior():
 
 
 def test_prior():
-    projector = make_prior()
-    prior = rail_prior.get_prior()
+    prior = make_prior()
+    prior = prior.get_prior()
     assert prior is not None
 
 

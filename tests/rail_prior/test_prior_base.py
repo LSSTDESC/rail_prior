@@ -1,7 +1,6 @@
 import qp
 import numpy as np
-from rail.rail_prior import prior_base
-
+import rail.rail_prior as rail_prior
 
 def make_qp_ens(file):
     zs = file['zs']
@@ -14,7 +13,7 @@ def make_qp_ens(file):
 def test_base():
     file = np.load('tests/rail_prior/dummy.npz')
     ens = make_qp_ens(file)
-    prior = prior_base.PriorBase(ens)
+    prior = rail_prior.PriorBase(ens)
     m, n = prior.nzs.shape
     k, = prior.z.shape
     nzs = file['pzs']
