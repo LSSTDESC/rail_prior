@@ -1,8 +1,7 @@
 import numpy as np
 import qp
-from .prior_base import PriorBase
-from scipy.interpolate import interp1d
 from scipy.stats import multivariate_normal as mvn
+from .prior_base import PriorBase
 
 
 class PriorShiftsWidths(PriorBase):
@@ -12,9 +11,9 @@ class PriorShiftsWidths(PriorBase):
     photometric distributions can be captured by varying the mean and the
     standard deviation of a fiducial n(z) distribution.
 
-    The calibration method was written by Tilman Tröster. 
+    The calibration method was written by Tilman Tröster.
     The shift prior is given by a Gaussian distributiob with zero mean
-    standard deviation the standard deviation in the mean of 
+    standard deviation the standard deviation in the mean of
     the measured photometric distributions.
     The width is calibrated by computing the standard deviations
     of the measured photometric distributions over redshift.
@@ -31,7 +30,7 @@ class PriorShiftsWidths(PriorBase):
         self.shift = self._find_shift()
         self.width = self._find_width()
 
-    def evaluate_model(self, nz, shift, width):
+    def evaluate_model(self, nz, args):
         """
         Aplies a shift and a width to the given p(z) distribution.
         This is done by evluating the n(z) distribution at
@@ -39,6 +38,7 @@ class PriorShiftsWidths(PriorBase):
         of the fiducial n(z) distribution and the rescaling by the width.
         Finally the distribution is normalized.
         """
+        shift, width = args
         z = nz[0]
         nz = nz[1]
         nz_i = qp.interp(xvals=z, yvals=nz)
@@ -51,12 +51,12 @@ class PriorShiftsWidths(PriorBase):
     def _find_shift(self):
         ms = np.mean(self.nzs, axis=1)  # mean of each nz
         ms_std = np.std(ms)             # std of the means
-        return ms_std                   
+        return ms_std
 
     def _find_width(self):
         stds = np.std(self.nzs, axis=1)
         std_std = np.std(stds)
-        std_mean = np.mean(stds) 
+        std_mean = np.mean(stds)
         width = std_std / std_mean
         return width
 
