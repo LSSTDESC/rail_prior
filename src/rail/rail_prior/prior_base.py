@@ -18,7 +18,7 @@ class PriorBase():
 
     def _prior_base(self, ens, z=None):
         if z is None:
-            z = np.linspace(0, 1.5, 45)
+            z = ens.metadata['bins']
         self.z = z
         nzs = ens.pdf(z)
         nzs = ens.objdata()['pdfs']
