@@ -40,12 +40,18 @@ class PriorMoments(PriorBase):
             if not self._is_pos_def(cov):
                 print('Warning: regularization failed')
                 print('The covariance matrix will be diagonalized')
-                cov = np.diag(np.diag(cov))
+                jitter = 1e-15
+                cov = np.diag(np.diag(self.nz_cov)+jitter)
         chol = cholesky(cov)
         return chol
 
     def _is_pos_def(self, A):
-        return np.all(np.linalg.eigvals(A) > 0)
+        try:
+            np.linalg.cholesky(A)
+            return True
+        except np.linalg.linalg.LinAlgError as err:
+            return False
+        #return np.all(np.linalg.eigvals(A) > 0)
 
     def evaluate_model(self, nz, args):
         """

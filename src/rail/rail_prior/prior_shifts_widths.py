@@ -1,5 +1,5 @@
 import numpy as np
-import qp
+from scipy.interpolate import interp1d
 from scipy.stats import multivariate_normal as mvn
 from .prior_base import PriorBase
 
@@ -41,10 +41,10 @@ class PriorShiftsWidths(PriorBase):
         shift, width = args
         z = nz[0]
         nz = nz[1]
-        nz_i = qp.interp(xvals=z, yvals=nz)
-        mu = nz_i.mean().squeeze()
+        nz_i = interp1d(z, nz, kind='linear', fill_value='extrapolate')
+        mu = np.mean(nz)
 
-        pdf = nz_i.pdf((z-mu)/width + mu + shift)/width
+        pdf = nz_i((z-mu)/width + mu + shift)/width
         norm = np.sum(pdf)
         return [z, pdf/norm]
 

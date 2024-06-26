@@ -1,4 +1,5 @@
 import numpy as np
+import qp
 
 
 class PriorBase():
@@ -16,13 +17,17 @@ class PriorBase():
     def __init__(self, ens):
         self._prior_base(ens)
 
-    def _prior_base(self, ens, z=None):
-        if z is None:
-            z = ens.metadata['bins']
+    def _prior_base(self, ens):
+        if type(ens) is qp.ensemble.Ensemble:
+            z_edges = ens.metadata()['bins'][0]
+            z = 0.5 * (z_edges[1:] + z_edges[:-1])
+            nzs = ens.objdata()['pdfs']
+        elif type(ens) is list:
+            z = ens[0]
+            nzs = ens[1]
+        else:
+            raise ValueError("Invalid ensemble type=={}".format(type(ens)))
         self.z = z
-        nzs = ens.pdf(z)
-        nzs = ens.objdata()['pdfs']
-        self.ens = ens
         self.nzs = self._normalize(nzs)
         self.nz_mean = np.mean(self.nzs, axis=0)
         self.nz_cov = np.cov(self.nzs, rowvar=False)
@@ -30,7 +35,7 @@ class PriorBase():
 
     def _normalize(self, nzs):
         norms = np.sum(nzs, axis=1)
-        nzs /= norms[:, None]
+        nzs = nzs/norms[:, None]
         return nzs
 
     def evaluate_model(self, nz, args):
