@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.optimize import fsolve
 from scipy.stats import multivariate_normal as mvn
 from .prior_base import PriorBase
 
@@ -40,10 +41,29 @@ class PriorShifts(PriorBase):
         return [z, pz_shift]
 
     def _find_shift(self):
-        stds = np.std(self.nzs, axis=1)  # std of each pz
-        s_stds = np.std(stds)            # std of the z-std
-        m_stds = np.mean(stds)           # mean of the z-std
-        return s_stds / m_stds
+        z_ms = []
+        i = 0
+        for nz in self.nzs:
+            m = np.mean(nz)
+            eq = interp1d(self.z, nz-m, kind='linear', fill_value='extrapolate')
+            z_m = fsolve(eq, np.mean(self.z))
+            if self.z[0] < z_m < self.z[-1]:
+                z_ms.append(z_m)
+            else:
+                i = i + 1
+        if i > 0:
+            print("Warning: {} out of {} n(z) distributions have no root.".format(i, len(self.nzs)))
+        m_fid = np.mean(self.nz_mean)
+        z_m_fid = fsolve(eq, np.mean(self.z))
+        z_ms = np.array(z_ms).T - z_m_fid
+        shift = [np.mean(z_ms), np.std(z_ms)]
+
+        #stds = np.std(self.nzs, axis=1)  # std of each pz
+        #s_stds = np.std(stds)            # std of the z-std
+        #m_stds = np.mean(stds)           # mean of the z-std
+        #shift = [0, s_stds / m_stds]
+        return shift
 
     def _get_prior(self):
-        return mvn([0], [self.shift**2])
+        m, s = self.shift
+        return mvn([m], [s**2])
