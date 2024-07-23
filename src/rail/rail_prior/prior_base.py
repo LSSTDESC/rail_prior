@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats import multivariate_normal as mvn
 import qp
 
 
@@ -60,18 +61,15 @@ class PriorBase():
         """
         Draws a sample from the prior distribution.
         """
-        prior = self.get_prior()
-        return prior.rvs()
+        prior_mean, prior_cov = self.get_prior()
+        prior_dist = mvn(prior_mean, prior_cov,
+                         allow_singular=True)
+        return prior_dist.rvs()
 
-    def save_prior(self, mode="dist"):
+    def save_prior(self):
         """
         Saves the prior distribution to a file.
         """
-        prior = self.get_prior()
-        if mode == "dist":
-            return prior
-        if mode == "file":
-            np.save("prior_mean.npy", prior.mean)
-            np.save("prior_cov.npy", prior.cov)
-        else:
-            raise NotImplementedError
+        prior_mean, prior_cov = self.get_prior()
+        np.save("prior_mean.npy", prior_mean)
+        np.save("prior_cov.npy", prior_cov)

@@ -43,29 +43,26 @@ class PriorShiftsWidths(PriorBase):
         nz = nz[1]
         nz_i = interp1d(z, nz, kind='linear', fill_value='extrapolate')
         mu = np.mean(nz)
-
         pdf = nz_i((z-mu)/width + mu + shift)/width
         norm = np.sum(pdf)
         return [z, pdf/norm]
 
     def _find_shift(self):
-        ms = np.mean(self.nzs, axis=1)  # mean of each nz
-        ms_std = np.std(ms)             # std of the means
-        return ms_std
+        mu = np.mean(self.nz_mean)
+        ms = [(np.mean(nz)-mu)/mu for nz in self.nzs]   # mean of each nz
+        shift = np.mean(self.z)*np.std(ms)                # std of the means
+        return shift
 
     def _find_width(self):
-        stds = np.std(self.nzs, axis=1)
-        std_std = np.std(stds)
-        std_mean = np.mean(stds)
-        width = std_std / std_mean
+        stds = np.std(self.nzs, axis=1) # std of each nz
+        std_std = np.std(stds)          # std of the stds
+        std_mean = np.mean(stds)        # mean of the stds
+        width = std_std / std_mean  
         return width
 
     def _get_prior(self):
-        return mvn([0, 1], [self.shift**2,  self.width**2],
-                   allow_singular=True)
-
-    def _get_shift_prior(self):
-        return mvn([0], [self.shift**2])
-
-    def _get_width_prior(self):
-        return mvn([1], [self.width**2])
+        mean = np.array([0, 1])
+        cov = np.array([
+            [self.shift**2, 0],
+            [0, self.width**2]])
+        return mean, cov
