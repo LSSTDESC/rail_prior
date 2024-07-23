@@ -51,3 +51,6 @@ class PriorShifts(PriorBase):
         mean = np.array([np.mean(shifts)])
         cov = np.array([[np.std(shifts)**2]])
         return mean, cov
+
+    def _get_params(self):
+        return self.shifts

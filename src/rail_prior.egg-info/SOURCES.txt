@@ -19,6 +19,7 @@ src/rail/rail_prior/__init__.py
 src/rail/rail_prior/_version.py
 src/rail/rail_prior/prior_base.py
 src/rail/rail_prior/prior_moments.py
+src/rail/rail_prior/prior_sacc.py
 src/rail/rail_prior/prior_shifts.py
 src/rail/rail_prior/prior_shifts_widths.py
 src/rail_prior.egg-info/PKG-INFO

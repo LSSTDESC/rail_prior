@@ -27,8 +27,8 @@ class PriorShiftsWidths(PriorBase):
         self._find_prior()
 
     def _find_prior(self):
-        self.shift = self._find_shift()
-        self.width = self._find_width()
+        self.shifts = self._find_shifts()
+        self.widths = self._find_widths()
 
     def evaluate_model(self, nz, args):
         """
@@ -47,22 +47,28 @@ class PriorShiftsWidths(PriorBase):
         norm = np.sum(pdf)
         return [z, pdf/norm]
 
-    def _find_shift(self):
+    def _find_shifts(self):
         mu = np.mean(self.nz_mean)
-        ms = [(np.mean(nz)-mu)/mu for nz in self.nzs]   # mean of each nz
-        shift = np.mean(self.z)*np.std(ms)                # std of the means
-        return shift
+        shifts = [(np.mean(nz)-mu)/mu for nz in self.nzs]   # mean of each nz
+        shifts = np.mean(self.z)*np.array(shifts)           # std of the means
+        return shifts
 
-    def _find_width(self):
+    def _find_widths(self):
         stds = np.std(self.nzs, axis=1) # std of each nz
-        std_std = np.std(stds)          # std of the stds
         std_mean = np.mean(stds)        # mean of the stds
-        width = std_std / std_mean  
-        return width
+        widths = stds / std_mean  
+        return widths
 
     def _get_prior(self):
-        mean = np.array([0, 1])
+        m_shift = np.mean(self.shifts)
+        m_width = np.mean(self.widths)
+        s_shift = np.std(self.shifts)
+        s_width = np.std(self.widths)
+        mean = np.array([m_shift, m_width])
         cov = np.array([
-            [self.shift**2, 0],
-            [0, self.width**2]])
+            [s_shift**2, 0],
+            [0, s_width**2]])
         return mean, cov
+
+    def _get_params(self):
+        return np.array([self.shifts, self.widths])
