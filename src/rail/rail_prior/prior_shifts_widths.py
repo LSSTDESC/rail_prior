@@ -71,3 +71,6 @@ class PriorShiftsWidths(PriorBase):
 
     def _get_params(self):
         return np.array([self.shifts, self.widths])
+
+    def _get_params_names(self):
+        return ['delta_z', 'width_z']

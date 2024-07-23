@@ -52,4 +52,7 @@ class PriorShifts(PriorBase):
         return mean, cov
 
     def _get_params(self):
-        return self.shifts
+        return np.array([self.shifts])
+
+    def _get_params_names(self):
+        return np.array(['delta_z'])
