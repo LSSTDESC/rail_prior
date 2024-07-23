@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.interpolate import interp1d
+from numpy.linalg import cholesky
 from .prior_base import PriorBase
 
 
@@ -33,7 +34,8 @@ class PriorShifts(PriorBase):
         shifts = self.shifts
         mean = np.array([np.mean(shifts)])
         cov = np.array([[np.std(shifts)**2]])
-        return mean, cov
+        chol = cholesky(cov)
+        return mean, cov, chol
 
     def _get_params(self):
         return np.array([self.shifts])

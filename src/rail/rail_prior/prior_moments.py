@@ -2,6 +2,7 @@ import numpy as np
 from numpy.linalg import eig, cholesky
 from scipy.stats import multivariate_normal as mvn
 from .prior_base import PriorBase
+from .utils import make_cov_posdef
 
 
 class PriorMoments(PriorBase):
@@ -24,39 +25,14 @@ class PriorMoments(PriorBase):
         self._find_prior()
 
     def _find_prior(self):
-        self.nz_cov = self._get_cov()
+        self.nz_cov = make_cov_posdef(self.nz_cov)
         self.nz_chol = cholesky(self.nz_cov)
 
-    def _get_cov(self):
-        cov = self.nz_cov
-        if not self._is_pos_def(cov):
-            print('Warning: Covariance matrix is not positive definite')
-            print('The covariance matrix will be regularized')
-            jitter = 1e-15 * np.eye(cov.shape[0])
-            w, v = eig(cov+jitter)
-            w = np.real(np.abs(w))
-            v = np.real(v)
-            cov = v @ np.diag(np.abs(w)) @ v.T
-            cov = np.tril(cov) + np.triu(cov.T, 1)
-            if not self._is_pos_def(cov):
-                print('Warning: regularization failed')
-                print('The covariance matrix will be diagonalized')
-                jitter = 1e-15
-                cov = np.diag(np.diag(self.nz_cov)+jitter)
-        return cov
-
-    def _is_pos_def(self, A):
-        try:
-            np.linalg.cholesky(A)
-            return True
-        except np.linalg.linalg.LinAlgError as err:
-            return False
-
     def _get_prior(self):
-        return self.nz_mean, self.nz_cov
+        return self.nz_mean, self.nz_cov, self.nz_chol
 
     def _get_params(self):
-        return self.nzs
+        return self.nzs.T
 
     def _get_params_names(self):
-        return ['nz_{}'.format(i) for i in range(len(self.nzs))]
+        return ['nz_{}'.format(i) for i in range(len(self.nzs.T))]
