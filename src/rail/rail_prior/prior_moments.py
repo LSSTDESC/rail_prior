@@ -52,13 +52,11 @@ class PriorMoments(PriorBase):
         except np.linalg.linalg.LinAlgError as err:
             return False
 
-    def evaluate_model(self, nz):
-        """
-        Samples a photometric distribution
-        from a Gaussian distribution with mean
-        and covariance measured from the data.
-        """
-        return nz
-
     def _get_prior(self):
         return self.nz_mean, self.nz_cov
+
+    def _get_params(self):
+        return self.nzs
+
+    def _get_params_names(self):
+        return ['nz_{}'.format(i) for i in range(len(self.nzs))]

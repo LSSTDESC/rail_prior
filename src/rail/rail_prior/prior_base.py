@@ -65,7 +65,7 @@ class PriorBase():
         prior_dist = mvn(prior_mean, prior_cov,
                          allow_singular=True)
         values = prior_dist.rvs()
-        if type(values) is float:
+        if type(values) is np.float64:
             values = np.array([values])
         param_names = self._get_params_names()
         samples = {param_names[i]: values[i] for i in range(len(values))}

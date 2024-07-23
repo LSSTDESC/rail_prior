@@ -29,23 +29,6 @@ class PriorShiftsWidths(PriorBase):
         self.shifts = self._find_shifts()
         self.widths = self._find_widths()
 
-    def evaluate_model(self, nz, args):
-        """
-        Aplies a shift and a width to the given p(z) distribution.
-        This is done by evluating the n(z) distribution at
-        p((z-mu)/width + mu + shift) where mu is the mean redshift
-        of the fiducial n(z) distribution and the rescaling by the width.
-        Finally the distribution is normalized.
-        """
-        shift, width = args
-        z = nz[0]
-        nz = nz[1]
-        nz_i = interp1d(z, nz, kind='linear', fill_value='extrapolate')
-        mu = np.mean(nz)
-        pdf = nz_i((z-mu)/width + mu + shift)/width
-        norm = np.sum(pdf)
-        return [z, pdf/norm]
-
     def _find_shifts(self):
         mu = np.mean(self.nz_mean)
         shifts = [(np.mean(nz)-mu)/mu for nz in self.nzs]   # mean of each nz

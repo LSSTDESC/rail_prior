@@ -23,22 +23,6 @@ class PriorShifts(PriorBase):
     def _find_prior(self):
         self.shifts = self._find_shifts()
 
-    def evaluate_model(self, nz, shift):
-        """
-        Aplies a shift to the given p(z) distribution.
-        This is done by interpolating the p(z) distribution
-        at the shifted z values and then evaluating it at the
-        original z values.
-        """
-        z = nz[0]
-        nz = nz[1]
-        nz_i = interp1d(z, nz,
-                        kind='linear',
-                        fill_value='extrapolate')
-        pdf = nz_i(z+shift)
-        norm = np.sum(pdf)
-        return [z, pdf/norm]
-
     def _find_shifts(self):
         mu = np.mean(self.nz_mean)
         shifts = [(np.mean(nz)-mu)/mu for nz in self.nzs]   # mean of each nz
