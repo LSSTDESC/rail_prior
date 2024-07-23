@@ -1,0 +1,103 @@
+Metadata-Version: 2.1
+Name: rail-prior
+Version: 0.1.dev22+gb909308
+Author-email: "LSST Dark Energy Science Collaboration (DESC)" <jaime.ruiz-zapatero@ucl.ac.uk>
+License: MIT License
+        
+        Copyright (c) 2023 LSST Dark Energy Science Collaboration (DESC)
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: qp-prob
+Requires-Dist: pyarrow
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: pytest-cov; extra == "dev"
+Requires-Dist: pre-commit; extra == "dev"
+Requires-Dist: pylint; extra == "dev"
+
+# RAIL prior
+
+[![Template](https://img.shields.io/badge/Template-LINCC%20Frameworks%20Python%20Project%20Template-brightgreen)](https://lincc-ppt.readthedocs.io/en/latest/)
+[![codecov](https://codecov.io/gh/LSSTDESC/rail-prior/branch/main/graph/badge.svg)](https://codecov.io/gh/LSSTDESC/rail-prior)
+[![PyPI](https://img.shields.io/pypi/v/rail_prior?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/rail_prior/)
+
+## TODO List
+
+To ensure that your project and repository is stable from the very start there 
+are a few todo items that you should take care of. Unfortunately the RAIL project
+template can not do these for you, otherwise it would :) 
+
+### Immediate actions
+- In your repository settings:
+  -  [ ] Grant the `LSSTDESC/rail_admin` group administrator access
+  -  [ ] Grant the `LSSTDESC/photo-z` group maintainer access
+-  [x] Configure Codecov for the repository
+  - [x] Go here, https://github.com/apps/codecov, click the "Configure" button
+- [x] Log in to PyPI.org and configure Trusted Publishing following these instructions https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/
+- [x] Create a Personal Access Token (PAT) to automatically add issues to the RAIL project tracker
+  - [x] Follow these instruction to create a PAT: https://github.com/actions/add-to-project#creating-a-pat-and-adding-it-to-your-repository 
+  - [x] Save your new PAT as a repository secret named `ADD_TO_PROJECT_PAT`
+
+### Before including in Rail-hub
+- Make sure your `main` branch is protected
+- Update this README
+- Create an example notebook
+- Run `pylint` on your code
+- Remove this TODO list once all items are completed
+
+
+## RAIL: Redshift Assessment Infrastructure Layers
+
+This package is part of the larger ecosystem of Photometric Redshifts
+in [RAIL](https://github.com/LSSTDESC/RAIL).
+
+### Citing RAIL
+
+This code, while public on GitHub, has not yet been released by DESC and is
+still under active development. Our release of v1.0 will be accompanied by a
+journal paper describing the development and validation of RAIL.
+
+If you make use of the ideas or software in RAIL, please cite the repository 
+<https://github.com/LSSTDESC/RAIL>. You are welcome to re-use the code, which
+is open source and available under terms consistent with the MIT license.
+
+External contributors and DESC members wishing to use RAIL for non-DESC projects
+should consult with the Photometric Redshifts (PZ) Working Group conveners,
+ideally before the work has started, but definitely before any publication or 
+posting of the work to the arXiv.
+
+### Citing this package
+
+If you use this package, you should also cite the appropriate papers for each
+code used.  A list of such codes is included in the 
+[Citing RAIL](https://lsstdescrail.readthedocs.io/en/stable/source/citing.html)
+section of the main RAIL Read The Docs page.
+
