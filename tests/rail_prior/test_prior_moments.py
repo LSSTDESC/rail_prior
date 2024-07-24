@@ -26,8 +26,8 @@ def test_prior():
 
 def test_sample_prior():
     prior = make_prior()
-    nz = prior.sample_prior()
-    assert len(nz) == len(prior.nz_mean)
+    prior_sample = prior.sample_prior()
+    assert len(list(prior_sample.values())) == len(prior.nz_mean)
 
 
 def test_model():
