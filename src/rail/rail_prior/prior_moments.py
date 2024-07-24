@@ -2,6 +2,7 @@ import numpy as np
 from numpy.linalg import eig, cholesky
 from scipy.stats import multivariate_normal as mvn
 from .prior_base import PriorBase
+from .utils import make_cov_posdef
 
 
 class PriorMoments(PriorBase):
@@ -24,46 +25,14 @@ class PriorMoments(PriorBase):
         self._find_prior()
 
     def _find_prior(self):
-        self.nz_chol = self._get_chol()
-
-    def _get_chol(self):
-        cov = self.nz_cov
-        if not self._is_pos_def(cov):
-            print('Warning: Covariance matrix is not positive definite')
-            print('The covariance matrix will be regularized')
-            jitter = 1e-15 * np.eye(cov.shape[0])
-            w, v = eig(cov+jitter)
-            w = np.real(np.abs(w))
-            v = np.real(v)
-            cov = v @ np.diag(np.abs(w)) @ v.T
-            cov = np.tril(cov) + np.triu(cov.T, 1)
-            if not self._is_pos_def(cov):
-                print('Warning: regularization failed')
-                print('The covariance matrix will be diagonalized')
-                jitter = 1e-15
-                cov = np.diag(np.diag(self.nz_cov)+jitter)
-        chol = cholesky(cov)
-        return chol
-
-    def _is_pos_def(self, A):
-        try:
-            np.linalg.cholesky(A)
-            return True
-        except np.linalg.linalg.LinAlgError as err:
-            return False
-        #return np.all(np.linalg.eigvals(A) > 0)
-
-    def evaluate_model(self, nz, args):
-        """
-        Samples a photometric distribution
-        from a Gaussian distribution with mean
-        and covariance measured from the data.
-        """
-        alpha = args
-        z = nz[0]
-        nz = nz[1]
-        return [z, nz + self.nz_chol @ alpha]
+        self.nz_cov = make_cov_posdef(self.nz_cov)
+        self.nz_chol = cholesky(self.nz_cov)
 
     def _get_prior(self):
-        return mvn(np.zeros_like(self.nz_mean),
-                   np.ones_like(self.nz_mean))
+        return self.nz_mean, self.nz_cov, self.nz_chol
+
+    def _get_params(self):
+        return self.nzs.T
+
+    def _get_params_names(self):
+        return ['nz_{}'.format(i) for i in range(len(self.nzs.T))]

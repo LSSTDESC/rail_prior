@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.interpolate import interp1d
-from scipy.stats import multivariate_normal as mvn
+from numpy.linalg import cholesky
 from .prior_base import PriorBase
 
 
@@ -27,45 +27,35 @@ class PriorShiftsWidths(PriorBase):
         self._find_prior()
 
     def _find_prior(self):
-        self.shift = self._find_shift()
-        self.width = self._find_width()
+        self.shifts = self._find_shifts()
+        self.widths = self._find_widths()
 
-    def evaluate_model(self, nz, args):
-        """
-        Aplies a shift and a width to the given p(z) distribution.
-        This is done by evluating the n(z) distribution at
-        p((z-mu)/width + mu + shift) where mu is the mean redshift
-        of the fiducial n(z) distribution and the rescaling by the width.
-        Finally the distribution is normalized.
-        """
-        shift, width = args
-        z = nz[0]
-        nz = nz[1]
-        nz_i = interp1d(z, nz, kind='linear', fill_value='extrapolate')
-        mu = np.mean(nz)
+    def _find_shifts(self):
+        mu = np.mean(self.nz_mean)
+        shifts = [(np.mean(nz)-mu)/mu for nz in self.nzs]   # mean of each nz
+        shifts = np.mean(self.z)*np.array(shifts)           # std of the means
+        return shifts
 
-        pdf = nz_i((z-mu)/width + mu + shift)/width
-        norm = np.sum(pdf)
-        return [z, pdf/norm]
-
-    def _find_shift(self):
-        ms = np.mean(self.nzs, axis=1)  # mean of each nz
-        ms_std = np.std(ms)             # std of the means
-        return ms_std
-
-    def _find_width(self):
-        stds = np.std(self.nzs, axis=1)
-        std_std = np.std(stds)
-        std_mean = np.mean(stds)
-        width = std_std / std_mean
-        return width
+    def _find_widths(self):
+        stds = np.std(self.nzs, axis=1) # std of each nz
+        std_mean = np.mean(stds)        # mean of the stds
+        widths = stds / std_mean  
+        return widths
 
     def _get_prior(self):
-        return mvn([0, 1], [self.shift**2,  self.width**2],
-                   allow_singular=True)
+        m_shift = np.mean(self.shifts)
+        m_width = np.mean(self.widths)
+        s_shift = np.std(self.shifts)
+        s_width = np.std(self.widths)
+        mean = np.array([m_shift, m_width])
+        cov = np.array([
+            [s_shift**2, 0],
+            [0, s_width**2]])
+        chol = cholesky(cov)
+        return mean, cov, chol
 
-    def _get_shift_prior(self):
-        return mvn([0], [self.shift**2])
+    def _get_params(self):
+        return np.array([self.shifts, self.widths])
 
-    def _get_width_prior(self):
-        return mvn([1], [self.width**2])
+    def _get_params_names(self):
+        return ['delta_z', 'width_z']

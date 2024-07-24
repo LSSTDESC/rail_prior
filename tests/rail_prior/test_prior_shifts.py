@@ -1,6 +1,6 @@
 import qp
 import numpy as np
-import rail.rail_prior as rail_prior
+import rail.rail_prior as rp
 
 
 def make_qp_ens(file):
@@ -15,7 +15,7 @@ def make_qp_ens(file):
 def make_prior():
     file = np.load('tests/rail_prior/dummy.npz')
     ens = make_qp_ens(file)
-    return rail_prior.PriorShifts(ens)
+    return rp.PriorShifts(ens)
 
 
 def test_prior():
@@ -26,14 +26,16 @@ def test_prior():
 
 def test_sample_prior():
     prior = make_prior()
-    shift = prior.sample_prior()
-    assert len([shift]) == len([prior.shift])
+    prior_sample = prior.sample_prior()
+    prior_params = len(list(prior_sample.values()))
+    assert prior_params == 1
 
 
 def test_model():
+    model = rp.shift_model
     prior = make_prior()
-    shift = prior.sample_prior()
+    shift = prior.sample_prior()['delta_z']
     input = np.array([prior.z, prior.nz_mean])
-    output = prior.evaluate_model(input, shift)
+    output = model(input, shift)
     assert (prior.z == output[0]).all()
     assert len(output[1]) == len(prior.nz_mean)

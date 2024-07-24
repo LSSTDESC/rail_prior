@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats import multivariate_normal as mvn
 import qp
 
 
@@ -38,12 +39,6 @@ class PriorBase():
         nzs = nzs/norms[:, None]
         return nzs
 
-    def evaluate_model(self, nz, args):
-        """
-        Evaluate the model at the given parameters.
-        """
-        raise NotImplementedError
-
     def get_prior(self):
         """
         Returns the calibrated prior distribution for the model
@@ -60,18 +55,26 @@ class PriorBase():
         """
         Draws a sample from the prior distribution.
         """
-        prior = self.get_prior()
-        return prior.rvs()
+        prior_mean, prior_cov, prior_chol = self.get_prior()
+        # prior_dist = mvn(prior_mean, prior_cov,
+        #                  allow_singular=True)
+        # values = prior_dist.rvs()
+        prior_dist = mvn(np.zeros_like(prior_mean),
+                         np.ones_like(np.diag(prior_cov)))
+        alpha = prior_dist.rvs()
+        if type(alpha) is np.float64:
+            alpha = np.array([alpha])
+        values = prior_mean + prior_chol @ alpha
+        #if type(values) is np.float64:
+        #    values = np.array([values])
+        param_names = self._get_params_names()
+        samples = {param_names[i]: values[i] for i in range(len(values))}
+        return samples
 
-    def save_prior(self, mode="dist"):
+    def save_prior(self):
         """
         Saves the prior distribution to a file.
         """
-        prior = self.get_prior()
-        if mode == "dist":
-            return prior
-        if mode == "file":
-            np.save("prior_mean.npy", prior.mean)
-            np.save("prior_cov.npy", prior.cov)
-        else:
-            raise NotImplementedError
+        prior_mean, prior_cov = self.get_prior()
+        np.save("prior_mean.npy", prior_mean)
+        np.save("prior_cov.npy", prior_cov)
