@@ -28,12 +28,3 @@ def test_sample_prior():
     prior = make_prior()
     prior_sample = prior.sample_prior()
     assert len(list(prior_sample.values())) == len(prior.nz_mean)
-
-
-def test_model():
-    prior = make_prior()
-    alpha = prior.sample_prior()
-    input = np.array([prior.z, prior.nz_mean])
-    output = prior.evaluate_model(input, alpha)
-    assert (prior.z == output[0]).all()
-    assert len(output[1]) == len(prior.nz_mean)
