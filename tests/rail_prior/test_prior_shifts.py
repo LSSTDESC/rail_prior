@@ -26,8 +26,9 @@ def test_prior():
 
 def test_sample_prior():
     prior = make_prior()
-    shift = prior.sample_prior()
-    assert len([shift]) == len([prior.shift])
+    prior_sample = prior.sample_prior()
+    prior_params = len(list(prior_sample.values()))
+    assert prior_params == 1
 
 
 def test_model():
