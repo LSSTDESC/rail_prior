@@ -21,15 +21,12 @@ class PriorMoments(PriorBase):
     diagonalized.
     """
     def __init__(self, ens):
-        self._prior_base(ens)
-        self._find_prior()
-
-    def _find_prior(self):
-        self.nz_cov = make_cov_posdef(self.nz_cov)
-        self.nz_chol = cholesky(self.nz_cov)
+        self._prior_base(ens) 
 
     def _get_prior(self):
-        return self.nz_mean, self.nz_cov, self.nz_chol
+        self.prior_mean = self.nz_mean
+        self.prior_cov = make_cov_posdef(self.nz_cov)
+        self.prior_chol = cholesky(self.nz_cov)
 
     def _get_params(self):
         return self.nzs.T

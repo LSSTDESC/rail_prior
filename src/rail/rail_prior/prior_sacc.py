@@ -24,7 +24,9 @@ class PriorSacc(PriorBase):
         self.tracers = sacc_file.tracers
         self.params = self._find_params()
         self.params_names = self._get_params_names()
-        self.prior = None
+        self.prior_mean = None
+        self.prior_cov = None
+        self.prior_chol = None
 
     def _find_params(self):
         params = []
@@ -37,7 +39,7 @@ class PriorSacc(PriorBase):
         return np.array(params)
 
     def _get_prior(self):
-        mean = np.array([np.mean(param_sets, axis=1) for param_sets in self.params]).flatten()
+        self.prior_mean = np.array([np.mean(param_sets, axis=1) for param_sets in self.params]).flatten()
         if self.compute_crosscorrs == "Full":
             params = []
             for param_sets in self.params:
@@ -47,7 +49,7 @@ class PriorSacc(PriorBase):
             cov = np.cov(params)
             cov = make_cov_posdef(cov)
             chol = cholesky(cov)
-        if self.compute_crosscorrs == "BinWise":
+        elif self.compute_crosscorrs == "BinWise":
             covs = []
             for p in self.params:
                 covs.append(np.cov(p))
@@ -55,14 +57,17 @@ class PriorSacc(PriorBase):
             cov = block_diag(*covs)
             cov = make_cov_posdef(cov)
             chol = cholesky(cov)
-        if self.compute_crosscorrs == "None":
+        elif self.compute_crosscorrs == "None":
             stds = []
             for param_sets in self.params:
                 for param_set in param_sets:
                     stds.append(np.std(param_set))
             cov = np.diag(stds**2)
-            chol = np.eye(len(mean))
-        return mean, cov, chol
+            chol = cholesky(cov)
+        else:
+            raise ValueError("Invalid compute_crosscorrs=={}".format(self.compute_crosscorrs))
+        self.prior_cov = cov
+        self.prior_chol = chol
 
     def _get_params_names(self):
         params_names = []
