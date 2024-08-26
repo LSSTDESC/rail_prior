@@ -10,6 +10,11 @@ To ensure that your project and repository is stable from the very start there
 are a few todo items that you should take care of. Unfortunately the RAIL project
 template can not do these for you, otherwise it would :) 
 
+### For Jaime
+
+- [] Change name and make sure it doesn't break anything
+- [] Remove the dependency from rail
+
 ### Immediate actions
 - In your repository settings:
   -  [ ] Grant the `LSSTDESC/rail_admin` group administrator access
