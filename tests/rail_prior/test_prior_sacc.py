@@ -23,7 +23,7 @@ def make_prior():
     s = sacc.Sacc()
     s.add_tracer('QPNZ', 'source_0', ens, z=zs)
     s.add_tracer('QPNZ', 'source_1', ens, z=zs)
-    return rp.PriorSacc(s)
+    return rp.PriorSacc(s, compute_crosscorr="None")
 
 
 def test_prior():
