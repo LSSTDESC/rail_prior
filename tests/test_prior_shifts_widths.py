@@ -14,7 +14,7 @@ def make_qp_ens(file):
 def make_prior():
     file = np.load('tests/dummy.npz')
     ens = make_qp_ens(file)
-    return rp.PriorShiftsWidths(ens)
+    return nz.PriorShiftsWidths(ens)
 
 
 def test_prior():
@@ -30,7 +30,7 @@ def test_sample_prior():
 
 
 def test_model():
-    model = rp.shift_and_width_model
+    model = nz.shift_and_width_model
     prior = make_prior()
     prior_sample = prior.sample_prior()
     shift = prior_sample['delta_z']
