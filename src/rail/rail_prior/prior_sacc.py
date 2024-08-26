@@ -62,7 +62,7 @@ class PriorSacc(PriorBase):
         else:
             raise ValueError("Invalid compute_crosscorrs=={}".format(self.compute_crosscorrs))
         self.prior_cov = make_cov_posdef(cov)
-        self.prior_chol = cholesky(cov)
+        self.prior_chol = cholesky(self.prior_cov)
 
     def _get_params_names(self):
         params_names = []
