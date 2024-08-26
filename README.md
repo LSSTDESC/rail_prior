@@ -12,8 +12,9 @@ template can not do these for you, otherwise it would :)
 
 ### For Jaime
 
-- [] Change name and make sure it doesn't break anything
-- [] Remove the dependency from rail
+- [ ] Change name and make sure it doesn't break anything
+- [ ] Remove the dependency from rail
+- [ ] Make project.toml read a requirements.txt
 
 ### Immediate actions
 - In your repository settings:
