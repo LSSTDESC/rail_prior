@@ -47,27 +47,22 @@ class PriorSacc(PriorBase):
                     params.append(param_set)
             params = np.array(params)
             cov = np.cov(params)
-            cov = make_cov_posdef(cov)
-            chol = cholesky(cov)
         elif self.compute_crosscorrs == "BinWise":
             covs = []
             for p in self.params:
                 covs.append(np.cov(p))
             covs = np.array(covs)
             cov = block_diag(*covs)
-            cov = make_cov_posdef(cov)
-            chol = cholesky(cov)
         elif self.compute_crosscorrs == "None":
             stds = []
             for param_sets in self.params:
                 for param_set in param_sets:
                     stds.append(np.std(param_set))
             cov = np.diag(stds**2)
-            chol = cholesky(cov)
         else:
             raise ValueError("Invalid compute_crosscorrs=={}".format(self.compute_crosscorrs))
-        self.prior_cov = cov
-        self.prior_chol = chol
+        self.prior_cov = make_cov_posdef(cov)
+        self.prior_chol = cholesky(cov)
 
     def _get_params_names(self):
         params_names = []
