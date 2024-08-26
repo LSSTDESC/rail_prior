@@ -1,6 +1,6 @@
 import qp
 import numpy as np
-import rail.rail_prior as rp
+import nz_prior as nz
 
 def make_qp_ens(file):
     zs = file['zs']

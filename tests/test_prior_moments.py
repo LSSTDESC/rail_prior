@@ -1,6 +1,6 @@
 import qp
 import numpy as np
-import rail.rail_prior as rail_prior
+import nz_prior as nz
 
 
 def make_qp_ens(file):
@@ -15,7 +15,7 @@ def make_qp_ens(file):
 def make_prior():
     file = np.load('tests/dummy.npz')
     ens = make_qp_ens(file)
-    return rail_prior.PriorMoments(ens)
+    return nz.PriorMoments(ens)
 
 
 def test_prior():
