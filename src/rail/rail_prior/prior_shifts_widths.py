@@ -52,7 +52,9 @@ class PriorShiftsWidths(PriorBase):
             [s_shift**2, 0],
             [0, s_width**2]])
         chol = cholesky(cov)
-        return mean, cov, chol
+        self.prior_mean = mean
+        self.prior_cov = cov
+        self.prior_chol = chol
 
     def _get_params(self):
         return np.array([self.shifts, self.widths])

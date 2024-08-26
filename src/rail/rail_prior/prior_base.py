@@ -32,7 +32,9 @@ class PriorBase():
         self.nzs = self._normalize(nzs)
         self.nz_mean = np.mean(self.nzs, axis=0)
         self.nz_cov = np.cov(self.nzs, rowvar=False)
-        self.prior = None
+        self.prior_mean = None
+        self.prior_cov = None
+        self.prior_chol = None
 
     def _normalize(self, nzs):
         norms = np.sum(nzs, axis=1)
@@ -44,9 +46,9 @@ class PriorBase():
         Returns the calibrated prior distribution for the model
         parameters given the measured photometric distributions.
         """
-        if self.prior is None:
+        if (self.prior_mean is None) | (self.prior_cov is None):
             self.prior = self._get_prior()
-        return self.prior
+        return self.prior_mean, self.prior_cov, self.prior_chol
 
     def _get_prior(self):
         raise NotImplementedError
@@ -71,10 +73,10 @@ class PriorBase():
         samples = {param_names[i]: values[i] for i in range(len(values))}
         return samples
 
-    def save_prior(self):
+    def save_prior(self, path="./"):
         """
         Saves the prior distribution to a file.
         """
         prior_mean, prior_cov = self.get_prior()
-        np.save("prior_mean.npy", prior_mean)
-        np.save("prior_cov.npy", prior_cov)
+        np.save(path+"prior_mean.npy", prior_mean)
+        np.save(path+"prior_cov.npy", prior_cov)
