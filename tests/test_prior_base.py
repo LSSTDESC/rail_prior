@@ -11,7 +11,7 @@ def make_qp_ens(file):
     return q
 
 def test_base():
-    file = np.load('tests/rail_prior/dummy.npz')
+    file = np.load('tests/dummy.npz')
     ens = make_qp_ens(file)
     prior = rp.PriorBase(ens)
     m, n = prior.nzs.shape

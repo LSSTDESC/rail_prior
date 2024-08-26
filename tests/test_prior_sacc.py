@@ -14,7 +14,7 @@ def make_qp_ens(file):
 
 
 def make_prior():
-    file = np.load('tests/rail_prior/dummy.npz')
+    file = np.load('tests/dummy.npz')
     zs = file['zs']
     nzs = file['pzs']
     dz = np.mean(np.diff(zs))

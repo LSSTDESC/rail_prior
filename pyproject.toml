@@ -1,5 +1,5 @@
 [project]
-name = "rail-prior"
+name = "nz-prior"
 requires-python = ">=3.9"
 license = {file = "LICENSE"}
 readme = "README.md"
@@ -35,14 +35,13 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-write_to = "src/rail/rail_prior/_version.py"
+write_to = "nz_prior/_version.py"
 
 [tool.pytest.ini_options]
 testpaths = [
     "tests",
 ]
 addopts = [
-    "--cov=rail",
     "--cov-report=html"
 ]
 

@@ -12,7 +12,7 @@ def make_qp_ens(file):
 
 
 def make_prior():
-    file = np.load('tests/rail_prior/dummy.npz')
+    file = np.load('tests/dummy.npz')
     ens = make_qp_ens(file)
     return rp.PriorShiftsWidths(ens)
 
