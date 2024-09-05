@@ -31,15 +31,14 @@ class PriorShiftsWidths(PriorBase):
         self.widths = self._find_widths()
 
     def _find_shifts(self):
-        mu = np.mean(self.nz_mean)
-        shifts = [(np.mean(nz)-mu)/mu for nz in self.nzs]   # mean of each nz
-        shifts = np.mean(self.z)*np.array(shifts)           # std of the means
+        mu = np.average(self.z, weights=self.nz_mean)
+        shifts = [(np.average(self.z, weights=nz)-mu) for nz in self.nzs]   # mean of each nz
         return shifts
 
     def _find_widths(self):
         stds = np.std(self.nzs, axis=1) # std of each nz
         std_mean = np.mean(stds)        # mean of the stds
-        widths = stds / std_mean  
+        widths = stds / std_mean
         return widths
 
     def _get_prior(self):
