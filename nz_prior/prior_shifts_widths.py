@@ -36,7 +36,12 @@ class PriorShiftsWidths(PriorBase):
         return shifts
 
     def _find_widths(self):
-        stds = np.std(self.nzs, axis=1) # std of each nz
+        stds = []
+        for nz in self.nzs:
+            mu = np.average(self.z, weights=nz)
+            std = np.sqrt(np.average((self.z-mu)**2, weights=nz))
+            stds.append(std)
+        stds = np.array(stds)
         std_mean = np.mean(stds)        # mean of the stds
         widths = stds / std_mean
         return widths
