@@ -32,3 +32,18 @@ def shift_and_width_model(nz, shift, width):
     pdf = nz_i((z-mu)/width + mu + shift)/width
     norm = np.sum(pdf)
     return [z, pdf/norm]
+
+def comb_model(nz, W, combs):
+    M = len(W)
+    z = nz[0]
+    nz = nz[1]
+    dz = (np.max(z) - np.min(z))/M 
+    zmeans = [(np.min(z)+dz/2) + i*dz for i in range(M)]
+    combs = {}
+    for i in np.arange(M):
+        combs[i] =  stats.norm(zmeans[i], dz/2)
+    nz_pred = np.zeros(len(z))
+    for i in np.arange(M):
+        nz_pred += (W[i]/M)*combs[i].pdf(z)
+    norm = np.sum(nz_pred)
+    return [z, nz_pred/norm]
