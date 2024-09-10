@@ -26,18 +26,26 @@ class PriorSacc(PriorBase):
 
         self.compute_crosscorrs = compute_crosscorrs
         self.tracers = sacc_file.tracers
-        self.params = self._find_params(**kwargs)
+        self.model_objs = self._make_model_objects(**kwargs)
+        self.params = self._find_params()
         self.params_names = self._get_params_names()
         self.prior_mean = None
         self.prior_cov = None
         self.prior_chol = None
 
-    def _find_params(self, **kwargs):
-        params = []
+    def _make_model_objects(self, **kwargs):
+        model_objs = {}
         for tracer_name in list(self.tracers.keys()):
             tracer = self.tracers[tracer_name]
             ens = tracer.ensemble
             model_obj = self.model(ens, **kwargs)
+            model_objs[tracer_name] = model_obj
+        return model_objs
+
+    def _find_params(self):
+        params = []
+        for tracer_name in list(self.tracers.keys()):
+            model_obj = self.model_objs[tracer_name]
             params_sets = model_obj._get_params()
             params.append(params_sets)
         return np.array(params)
