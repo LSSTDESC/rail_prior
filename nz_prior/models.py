@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.stats import norm
 
 def shift_model(nz, shift):
     """
@@ -33,17 +34,16 @@ def shift_and_width_model(nz, shift, width):
     norm = np.sum(pdf)
     return [z, pdf/norm]
 
-def comb_model(nz, W, combs):
-    M = len(W)
+def comb_model(nz, W):
+    ncombs = len(W)
     z = nz[0]
     nz = nz[1]
-    dz = (np.max(z) - np.min(z))/M 
-    zmeans = [(np.min(z)+dz/2) + i*dz for i in range(M)]
+    dz = (np.max(z) - np.min(z))/ncombs 
+    zmeans = [(np.min(z)+dz/2) + i*dz for i in range(ncombs)]
     combs = {}
-    for i in np.arange(M):
-        combs[i] =  stats.norm(zmeans[i], dz/2)
+    for i in np.arange(ncombs):
+        combs[i] = norm(zmeans[i], dz/2)
     nz_pred = np.zeros(len(z))
-    for i in np.arange(M):
-        nz_pred += (W[i]/M)*combs[i].pdf(z)
-    norm = np.sum(nz_pred)
-    return [z, nz_pred/norm]
+    for i in np.arange(ncombs):
+        nz_pred += (W[i]/ncombs)*combs[i].pdf(z)
+    return [z, nz_pred/np.sum(nz_pred)]
