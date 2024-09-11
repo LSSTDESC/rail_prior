@@ -80,9 +80,7 @@ class PriorSacc(PriorBase):
     def _get_params_names(self):
         params_names = []
         for tracer_name in list(self.tracers.keys()):
-            tracer = self.tracers[tracer_name]
-            ens = tracer.ensemble
-            model_obj = self.model(ens)
+            model_obj = self.model_objs[tracer_name]
             params_names_set = model_obj._get_params_names()
             for param_name in params_names_set:
                 param_name = tracer_name + "__" + param_name

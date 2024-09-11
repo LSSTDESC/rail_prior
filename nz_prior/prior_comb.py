@@ -32,9 +32,8 @@ class PriorComb(PriorBase):
         return np.array(Ws)
 
     def _get_prior(self):
-        Ws = self.Ws
-        mean = np.mean(Ws, axis=0)
-        cov = np.cov(Ws.T)
+        mean = np.mean(self.Ws, axis=0)
+        cov = np.cov(self.Ws.T)
         cov = make_cov_posdef(cov)
         chol = cholesky(cov)
         self.prior_mean = mean

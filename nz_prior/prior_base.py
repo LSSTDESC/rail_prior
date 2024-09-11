@@ -62,7 +62,7 @@ class PriorBase():
         #                  allow_singular=True)
         # values = prior_dist.rvs()
         prior_dist = mvn(np.zeros_like(prior_mean),
-                         np.ones_like(np.diag(prior_cov)))
+                         np.ones_like(prior_mean))
         alpha = prior_dist.rvs()
         if type(alpha) is np.float64:
             alpha = np.array([alpha])
