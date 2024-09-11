@@ -25,9 +25,8 @@ class PriorShifts(PriorBase):
         self.shifts = self._find_shifts()
 
     def _find_shifts(self):
-        mu = np.mean(self.nz_mean)
-        shifts = [(np.mean(nz)-mu)/mu for nz in self.nzs]   # mean of each nz
-        shifts = np.mean(self.z)*np.array(shifts)                     # std of the means
+        mu = np.average(self.z, weights=self.nz_mean)
+        shifts = [(np.average(self.z, weights=nz)-mu) for nz in self.nzs]   # mean of each nz
         return shifts
 
     def _get_prior(self):
