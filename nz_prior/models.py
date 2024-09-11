@@ -9,8 +9,7 @@ def shift_model(nz, shift):
     at the shifted z values and then evaluating it at the
     original z values.
     """
-    z = nz[0]
-    nz = nz[1]
+    z, nz = nz
     nz_i = interp1d(z, nz,
                     kind='linear',
                     fill_value='extrapolate')
@@ -18,7 +17,7 @@ def shift_model(nz, shift):
     norm = np.sum(pdf)
     return [z, pdf/norm]
 
-def shift_and_width_model(nz, shift, width):
+def shift_and_width_model(nz, params):
     """
     Aplies a shift and a width to the given p(z) distribution.
     This is done by evluating the n(z) distribution at
@@ -26,8 +25,8 @@ def shift_and_width_model(nz, shift, width):
     of the fiducial n(z) distribution and the rescaling by the width.
     Finally the distribution is normalized.
     """
-    z = nz[0]
-    nz = nz[1]
+    shift, width = params
+    z, nz = nz
     nz_i = interp1d(z, nz, kind='linear', fill_value='extrapolate')
     mu = np.average(z, weights=nz)
     pdf = nz_i((z-mu)/width + mu + shift)/width
@@ -36,8 +35,7 @@ def shift_and_width_model(nz, shift, width):
 
 def comb_model(nz, W):
     ncombs = len(W)
-    z = nz[0]
-    nz = nz[1]
+    z, nz = nz
     dz = (np.max(z) - np.min(z))/ncombs 
     zmeans = [(np.min(z)+dz/2) + i*dz for i in range(ncombs)]
     combs = {}

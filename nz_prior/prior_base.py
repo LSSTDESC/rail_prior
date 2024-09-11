@@ -58,17 +58,12 @@ class PriorBase():
         Draws a sample from the prior distribution.
         """
         prior_mean, prior_cov, prior_chol = self.get_prior()
-        # prior_dist = mvn(prior_mean, prior_cov,
-        #                  allow_singular=True)
-        # values = prior_dist.rvs()
         prior_dist = mvn(np.zeros_like(prior_mean),
                          np.ones_like(prior_mean))
         alpha = prior_dist.rvs()
         if type(alpha) is np.float64:
             alpha = np.array([alpha])
         values = prior_mean + prior_chol @ alpha
-        #if type(values) is np.float64:
-        #    values = np.array([values])
         param_names = self._get_params_names()
         samples = {param_names[i]: values[i] for i in range(len(values))}
         return samples
