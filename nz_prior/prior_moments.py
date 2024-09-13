@@ -21,7 +21,7 @@ class PriorMoments(PriorBase):
     diagonalized.
     """
     def __init__(self, ens):
-        self._prior_base(ens) 
+        self._prior_base(ens)
 
     def _get_prior(self):
         self.prior_mean = self.nz_mean

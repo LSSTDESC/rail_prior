@@ -4,6 +4,7 @@ from scipy.linalg import block_diag
 from .prior_base import PriorBase
 from .prior_shifts import PriorShifts
 from .prior_shifts_widths import PriorShiftsWidths
+from .prior_comb import PriorComb
 from .prior_moments import PriorMoments
 from .utils import make_cov_posdef, is_pos_def
 
@@ -12,28 +13,39 @@ class PriorSacc(PriorBase):
 
     def __init__(self, sacc_file,
                  model="Shifts",
-                 compute_crosscorrs="Full"):
+                 compute_crosscorrs="Full",
+                 **kwargs):
         if model == "Shifts":
             self.model = PriorShifts
         if model == "ShiftsWidths":
             self.model = PriorShiftsWidths
         if model == "Moments":
             self.model = PriorMoments
+        if model == "Comb":
+            self.model = PriorComb
 
         self.compute_crosscorrs = compute_crosscorrs
         self.tracers = sacc_file.tracers
+        self.model_objs = self._make_model_objects(**kwargs)
         self.params = self._find_params()
         self.params_names = self._get_params_names()
         self.prior_mean = None
         self.prior_cov = None
         self.prior_chol = None
 
-    def _find_params(self):
-        params = []
+    def _make_model_objects(self, **kwargs):
+        model_objs = {}
         for tracer_name in list(self.tracers.keys()):
             tracer = self.tracers[tracer_name]
             ens = tracer.ensemble
-            model_obj = self.model(ens)
+            model_obj = self.model(ens, **kwargs)
+            model_objs[tracer_name] = model_obj
+        return model_objs
+
+    def _find_params(self):
+        params = []
+        for tracer_name in list(self.tracers.keys()):
+            model_obj = self.model_objs[tracer_name]
             params_sets = model_obj._get_params()
             params.append(params_sets)
         return np.array(params)
@@ -58,6 +70,7 @@ class PriorSacc(PriorBase):
             for param_sets in self.params:
                 for param_set in param_sets:
                     stds.append(np.std(param_set))
+            stds = np.array(stds)
             cov = np.diag(stds**2)
         else:
             raise ValueError("Invalid compute_crosscorrs=={}".format(self.compute_crosscorrs))
@@ -67,9 +80,7 @@ class PriorSacc(PriorBase):
     def _get_params_names(self):
         params_names = []
         for tracer_name in list(self.tracers.keys()):
-            tracer = self.tracers[tracer_name]
-            ens = tracer.ensemble
-            model_obj = self.model(ens)
+            model_obj = self.model_objs[tracer_name]
             params_names_set = model_obj._get_params_names()
             for param_name in params_names_set:
                 param_name = tracer_name + "__" + param_name
