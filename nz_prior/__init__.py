@@ -4,5 +4,6 @@ from .prior_shifts_widths import PriorShiftsWidths
 from .prior_moments import PriorMoments
 from .prior_comb import PriorComb
 from .prior_sacc import PriorSacc
-from .models import shift_model, shift_and_width_model, comb_model
+from .prior_pca import PriorPCA
+from .models import shift_model, shift_and_width_model, comb_model, pca_model
 from .utils import is_pos_def, make_cov_posdef, Dkl, Sym_Dkl

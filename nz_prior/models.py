@@ -47,3 +47,9 @@ def comb_model(nz, W):
     for i in np.arange(ncombs):
         nz_pred += (W[i]/ncombs)*combs[i].pdf(z)
     return [z, nz_pred/np.sum(nz_pred)]
+
+def pca_model(nz, W, eigvecs):
+    nz_pred = np.zeros(len(nz[0]))
+    for i in np.arange(len(W)):
+        nz_pred += W[i]*eigvecs[i]
+    return [nz[0], nz_pred/np.sum(nz_pred)]
