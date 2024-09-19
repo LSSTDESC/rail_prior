@@ -49,7 +49,6 @@ def comb_model(nz, W):
     return [z, nz_pred/np.sum(nz_pred)]
 
 def pca_model(nz, W, eigvecs):
-    nz_pred = np.zeros(len(nz[0]))
-    for i in np.arange(len(W)):
-        nz_pred += W[i]*eigvecs[i]
-    return [nz[0], nz_pred/np.sum(nz_pred)]
+    z, nz = nz
+    new_nz = nz + np.dot(eigvecs.T, W)
+    return [z, new_nz]

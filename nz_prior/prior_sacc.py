@@ -5,7 +5,8 @@ from .prior_base import PriorBase
 from .prior_shifts import PriorShifts
 from .prior_shifts_widths import PriorShiftsWidths
 from .prior_comb import PriorComb
-from .prior_moments import PriorMoments
+from .prior_gp import PriorGP
+from .prior_pca import PriorPCA
 from .utils import make_cov_posdef, is_pos_def
 
 
@@ -19,10 +20,12 @@ class PriorSacc(PriorBase):
             self.model = PriorShifts
         if model == "ShiftsWidths":
             self.model = PriorShiftsWidths
-        if model == "Moments":
-            self.model = PriorMoments
+        if model == "GP":
+            self.model = PriorGP
         if model == "Comb":
             self.model = PriorComb
+        if model == "PCA":
+            self.model = PriorPCA
 
         self.compute_crosscorrs = compute_crosscorrs
         self.tracers = sacc_file.tracers
