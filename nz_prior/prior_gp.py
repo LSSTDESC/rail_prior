@@ -20,16 +20,50 @@ class PriorGP(PriorBase):
     to its eigen-values. If this fails, the covariance matrix will be
     diagonalized.
     """
-    def __init__(self, ens):
+    def __init__(self, ens,
+                znodes=None,
+                interp_mode='linear'):
+        self.interp_mode = interp_mode
+        self.znodes = znodes
         self._prior_base(ens)
+        self._find_prior()
+
+    def _find_prior(self):
+        if self.znodes is None:
+            self.znodes = self.z
+            self.samples = self.nzs
+        else:
+            if self.interp_mode == 'linear':
+                self.samples = np.array([np.interp(self.znodes, self.z, nz) for nz in self.nzs])
+            elif self.interp_mode == 'wiener':
+                self.samples = self._wiener_filter(self.znodes, self.z, self.nzs)
+
+    def _wiener_filter(self, z_new, z_old, nzs):
+        N, M = len(z_old), len(z_new)
+        concat_nzs = []
+        for nz in nzs:
+            nz_new = np.interp(z_new, z_old, nz)
+            concat_nz = np.append(nz_new, nz)
+            concat_nzs.append(concat_nz)
+        concat_cov = np.cov(np.array(concat_nzs).T)
+        Koo = concat_cov[M:, M:]
+        Koo_inv = np.linalg.pinv(Koo)
+        Kon = concat_cov[:M, M:]
+        C = Kon @ Koo_inv
+        new_samples = np.array([C @ nz for nz in nzs])
+        return new_samples
 
     def _get_prior(self):
-        self.prior_mean = self.nz_mean
-        self.prior_cov = make_cov_posdef(self.nz_cov)
-        self.prior_chol = cholesky(self.prior_cov)
+        mean = np.mean(self.samples, axis=0)
+        cov = np.cov(self.samples.T)
+        cov = make_cov_posdef(cov)
+        chol = cholesky(cov)
+        self.prior_mean = mean
+        self.prior_cov = cov
+        self.prior_chol = chol
 
     def _get_params(self):
-        return self.nzs.T
+        return self.samples.T
 
     def _get_params_names(self):
-        return ['nz_{}'.format(i) for i in range(len(self.nzs.T))]
+        return ['nz_{}'.format(i) for i in range(len(self.samples.T))]
