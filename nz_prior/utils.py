@@ -46,8 +46,8 @@ def Dkl(mu_1, K_1, mu_2, K_2):
     K_2 = make_cov_posdef(K_2)
     K_2_inv = np.linalg.pinv(K_2)
     K_1_inv = np.linalg.pinv(K_1)
-    K_1_det = np.linalg.det(K_1)
-    K_2_det = np.linalg.det(K_2)
+    K_1_det = np.linalg.det((10**8)*K_1)
+    K_2_det = np.linalg.det((10**8)*K_2)
     T1 = np.trace(K_2_inv @ K_1)
     T2 = r @ K_1_inv @ r
     T3 = np.log(K_2_det / K_1_det)
