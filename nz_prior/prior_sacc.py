@@ -51,6 +51,10 @@ class PriorSacc(PriorBase):
             model_obj = self.model_objs[tracer_name]
             params_sets = model_obj._get_params()
             params.append(params_sets)
+        try:
+            np.array(params)
+        except:
+            raise ValueError("Each QP ensemble has different number of realizations")
         return np.array(params)
 
     def _get_prior(self):
