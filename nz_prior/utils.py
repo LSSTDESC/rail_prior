@@ -18,13 +18,27 @@ def make_cov_posdef(cov):
             cov = np.diag(np.diag(cov))+jitter
     return cov
 
-
 def is_pos_def(A):
     try:
         cholesky(A)
         return True
     except np.linalg.linalg.LinAlgError as err:
         return False
+
+def wiener_filter(z_new, z_old, nzs):
+    N, M = len(z_old), len(z_new)
+    concat_nzs = []
+    for nz in nzs:
+        nz_new = np.interp(z_new, z_old, nz)
+        concat_nz = np.append(nz_new, nz)
+        concat_nzs.append(concat_nz)
+    concat_cov = np.cov(np.array(concat_nzs).T)
+    Koo = concat_cov[M:, M:]
+    Koo_inv = np.linalg.pinv(Koo)
+    Kon = concat_cov[:M, M:]
+    C = Kon @ Koo_inv
+    new_samples = np.array([C @ nz for nz in nzs])
+    return new_samples
 
 def Dkl(mu_1, K_1, mu_2, K_2):
     r = mu_1 - mu_2

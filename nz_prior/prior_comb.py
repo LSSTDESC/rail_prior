@@ -9,8 +9,8 @@ class PriorComb(PriorBase):
     """
     Prior for the comb model.
     """
-    def __init__(self, ens, ncombs=10):
-        self._prior_base(ens)
+    def __init__(self, ens, ncombs=10, zgrid=None):
+        self._prior_base(ens, zgrid=zgrid)
         self.ncombs = ncombs
         zmax = np.max(self.z)
         zmin = np.min(self.z)

@@ -9,8 +9,8 @@ class PriorPCA(PriorBase):
     """
     Prior for the PCA model.
     """
-    def __init__(self, ens, npca=5):
-        self._prior_base(ens)
+    def __init__(self, ens, npca=5, zgrid=None):
+        self._prior_base(ens, zgrid=zgrid)
         self.npca = npca
         d_nzs = self.nzs - self.nz_mean
         d_cov = np.cov(d_nzs, rowvar=False)

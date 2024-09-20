@@ -15,10 +15,10 @@ class PriorBase():
     - get_prior: return the prior distribution of the model given
     the meadured photometric distributions.
     """
-    def __init__(self, ens):
+    def __init__(self, ens, zgrid=None):
         self._prior_base(ens)
 
-    def _prior_base(self, ens):
+    def _prior_base(self, ens, zgrid=None):
         if type(ens) is qp.ensemble.Ensemble:
             z_edges = ens.metadata()['bins'][0]
             z = 0.5 * (z_edges[1:] + z_edges[:-1])
@@ -28,7 +28,13 @@ class PriorBase():
             nzs = ens[1]
         else:
             raise ValueError("Invalid ensemble type=={}".format(type(ens)))
-        self.z = z
+
+        if zgrid is not None:
+            nzs = [np.interp(zgrid, z, nz) for nz in nzs]
+            self.z = zgrid
+        else:
+            self.z = z
+
         self.nzs = self._normalize(nzs)
         self.nz_mean = np.mean(self.nzs, axis=0)
         self.nz_cov = np.cov(self.nzs, rowvar=False)
